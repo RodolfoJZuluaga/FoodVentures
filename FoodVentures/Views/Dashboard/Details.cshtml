@@ -1,0 +1,488 @@
+﻿@model FoodVentures.Models.ViewModels.ItemViewModel<int, int>
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/jsTag.css" rel="stylesheet" />
+<link href="~/Content/ngCropper.all.css" rel="stylesheet" />
+<style>
+    /*.tags1 {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        line-height: 1.42857143;
+        color: #333;
+    }*/
+    .form-horizontal .form-control {
+        width: 97%;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #000000;
+    }
+
+    i {
+        color: #000000
+    }
+</style>
+<div ng-controller="dashboardController as dash">
+    <h2 class="text-center">{{dash.message}}</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="widget">
+                <img ng-if="dash.person.avatarUrl" class="img-responsive" style="height:200px;width:200px;" ng-src="//rjz.blob.core.windows.net/images/{{dash.person.avatarUrl}}" />
+                <img ng-if="!dash.person.avatarUrl" class="img-responsive" style="height:200px;width:200px;" ng-src="//rjz.blob.core.windows.net/images/a80a35c0-ef3e-4296-b0df-bfcad0f8b0fd" />
+                <table class="table-striped">
+                    <tr>
+                        <th>Name:</th>
+                        <td>{{dash.person.firstName}} {{dash.person.lastName}} </td>
+                    </tr>
+                    <tr>
+                        <th>Location:</th>
+                        <td>{{dash.person.location}} </td>
+                    </tr>
+                    <tr>
+                        <th>Favorite Foods:</th>
+                        <td>{{dash.person.favoriteFoods}} </td>
+                    </tr>
+                    <tr>
+                        <th>Favorite Destinations:</th>
+                        <td>{{dash.person.favoriteDestinations}} </td>
+                    </tr>
+                    <tr>
+                        <th>Bio:</th>
+                        <td>{{dash.person.bio}} </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <form name="userForm" class="form-horizontal" ng-submit="dash.submitForm(userForm.$valid)" novalidate ng-show="dash.personId == dash.currentUserId">
+                    <div class="form-group" ng-class="{'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+                        <label class="control-label col-md-2">Food Name</label>
+                        <div class="col-md-10">
+                            <input type="text" name="name" class="form-control" ng-model="dash.food.name" required>
+                        </div>
+                        <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-center">Your name is required.</p>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
+                        <label class="control-label col-md-2">Location</label>
+                        <div class="col-md-10">
+                            <input type="text" name="location" class="form-control" ng-model="dash.food.location" required>
+                        </div>
+                        <p ng-show="userForm.location.$invalid && !userForm.location.$pristine" class="help-block text-center">Location is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Comment</label>
+                        <div class="col-md-10">
+                            <textarea rows="4" class="form-control" id="comment" ng-model="dash.food.comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="tags">Tags:</label>
+                        <div class="col-md-10">
+                            <js-tag js-tag-options="dash.jsTagOptions" id="tags"></js-tag>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="file" ng-model="dash.image" onchange="angular.element(this).scope().readProfile(this.files[0])">
+                        </div>
+                    </div>
+                    <!-- SUBMIT BUTTON -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary btn-block" ng-click="dash.upload()" ng-disabled="userForm.$invalid">Submit FoodVenture!</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <div class="primary-sidebar widget-area" role="complementary">
+                            <div class="widget">
+                                <div class="widget_categories">
+                                    <h4 class="font-accident-one-bold uppercase">Destinations</h4>
+                                    <ul>
+                                        <li class="cat-item cat-item-21">
+                                            <a href="#">Los Angeles</a>
+                                        </li>
+                                        <li class="cat-item cat-item-22">
+                                            <a href="#">Tokyo</a>
+                                        </li>
+                                        <li class="cat-item cat-item-23">
+                                            <a href="#">Manila</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="widget">
+                                <div class="widget_recent_entries">
+                                    <h4 class="font-accident-one-bold uppercase">Tags</h4>
+                                    <label ng-repeat="tag in dash.tagsList" class="btn btn-info" ng-model="tags" ng-click="dash.includeTags(tag.tagName)" uib-btn-checkbox>{{tag.tagName}} <small>({{tag.count}})</small></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="content">
+            <div id="portfolio" class="e-block e-block-skin e-block-centered nopadding">
+
+                <!-- Decorative arrow -->
+                <div class="down-arrow">&nbsp;</div>
+                <!-- /Decorative arrow -->
+                <div class="dividewhite2"></div>
+
+                <div class="container">
+                    <div id="isotope-filters" class="port-filter block-centered">
+                        <ul>
+                            <li><a href="#cat1" data-filter="*">Los Angeles</a></li>
+                            <li><a href="#cat2" data-filter=".web">Tokyo</a></li>
+                            <li><a href="#cat3" data-filter=".marketing">Mexico City</a></li>
+                        </ul>
+                    </div>
+                    <div class="dividewhite4"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3" ng-repeat="(foodIndex, food) in dash.foodItems | filter:dash.tagFilter">
+                        <div class="item-wrap">
+                            <figure class="effect-goliath captions">
+                                <img width="200" height="200" src="//rjz.blob.core.windows.net/images/{{food.url}}">
+                                @*<figcaption>
+                                        <a href="portfolio-item.html">View more</a>
+                                    </figcaption>*@
+                            </figure>
+                            <div class="portfolio-caption">
+                                <p class="pull-right" ng-show="dash.isShowingDelete(foodIndex)">
+                                    Delete Food?: <button class="btn btn-primary btn-xs" ng-click="dash.delete(food.id)">Yes</button> / <button class="btn btn-primary btn-xs" ng-click="dash.showDelete(foodIndex)">No</button>
+                                </p>
+                                    <h4 class="font-accident-one-normal uppercase">
+                                        {{food.name}}
+                                        <a class="pull-right" ng-click="dash.showDelete(foodIndex)" ng-hide="dash.isShowingDelete(foodIndex)">
+                                            <i class="fa fa-trash-o nopadding" ng-show="dash.personId == dash.currentUserId"></i>
+                                        </a>
+                                    </h4>
+                                    <p>{{food.comment}}</p>
+                                    <div class="dividewhite1"></div>
+                                    <div class="portfolio-date">
+                                        <p><span class="icon-clock"></span>{{food.dateCreated | date:"yyyy/MM/dd"}}</p><br />
+                                        <p><span class="icon-tag" ng-repeat="tag in food.tags"><small style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif; ">{{tag.tagName}} </small></span></p>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/ng/ngCropper.all.min.js"></script>
+    <script src="~/Scripts/ng/jsTag.debug.js"></script>
+    <script src="~/Scripts/ng/jsTag.min.js"></script>
+    <script>
+        foodVentures.page.personId = @Model.Item1;
+        foodVentures.page.currentUserId = @Model.Item2;
+        console.log(foodVentures.page.personId);
+        console.log(foodVentures.page.currentUserId);
+
+        (function () {
+            'use strict';
+            angular.module('foodVenturesApp').controller('dashboardController', DashboardController);
+            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection'];
+
+            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection) {
+                var vm = this;
+                vm.$scope = $scope;
+                vm.$http = $http;
+                vm.message = "Dashboard";
+                vm.personId = @Model.Item1;
+                vm.currentUserId = @Model.Item2;
+                vm.person = {};
+                vm.file = null;
+                vm.test = _test;
+                vm.$scope.readProfile = _readProfile;
+                vm.tags = null;
+                vm.tagArray = [];
+                vm.postTagsArray = [];
+                vm.food = {};
+                vm.image = null;
+                vm.foodItems = [];
+                vm.tagsList = [];
+                vm.upload = _upload;
+                vm.includeTags = _includeTags;
+                vm.tagFilter = _tagFilter;
+                vm.filteredTags = [];
+                vm.jsTags = new JSTagsCollection();
+                vm.jsTagOptions = {
+                    "tags": vm.jsTags,
+                    "texts": {
+                        "inputPlaceHolder": "Input Tags"
+                    }
+                };
+                vm.foodIndex = null;
+                vm.showDelete = _showDelete;
+                vm.isShowingDelete = _isShowingDelete;
+                vm.showDeleteItem = false;
+                vm.delete = _delete;
+
+                render();
+                function render() {
+                    $http.get("/api/people/" + vm.personId)
+                        .then(onSuccess, onError);
+                    renderFood();
+                };
+                function renderFood() {
+                    $http.get("/api/food/person/" + vm.personId)
+                        .then(onFSuccess, onFError);
+                };
+
+                function onSuccess(data) {
+                    console.log(data.data)
+                    vm.person = data.data;
+                };
+                function onError() {
+                    console.log("Error")
+                };
+                function onFSuccess(data) {
+                    vm.foodItems = data.data;
+                    console.log(data.data);
+                    _getFoodTags(vm.foodItems);
+                };
+                function onFError(jqXHR) {
+                    console.log(jqXHR.responseText);
+                    console.log("Error Getting Food")
+                };
+                function _upload() {
+                    var fd = new FormData();
+                    var imgBlob = dataURItoBlob(vm.dataUrl);
+                    fd.append('file', imgBlob);
+                    $http.post("/api/upload", fd, {
+                        transformRequest: angular.identity,
+                        headers: { 'Content-Type': undefined }
+                    }).then(_onUploadSuccess, _onUploadError);
+                };
+                function _onUploadSuccess(data) {
+                    console.log("uploaded file!");
+                    console.log(data);
+                    vm.dataUrl = null;
+                    vm.food.url = data.data;
+                    getTags();
+                };
+                function _onUploadError(jqXHR) {
+                    console.log("error uploading image");
+                    console.log(jqXHR.responseText);
+                };
+                function _test(index, array) {
+                };
+                function getTags() {
+                    vm.postTagsArray = [];
+                    vm.tagArray = vm.jsTags.getTagValues();
+                    if (vm.tagArray.length > 0) {
+                        var qString = "?names=" + vm.tagArray.join("&names=");
+                        $http.get("/api/tags" + qString)
+                            .then(onTSuccess, onTError);
+                    }
+                    else {
+                        postFoods();
+                    }
+                }
+                function onTSuccess(data) {
+                    console.log(data.data)
+                    console.log(vm.tagArray)
+                    if(data.data){
+                    vm.postTagsArray = data.data;
+                    tagInArray(vm.postTagsArray);
+                    }
+                    else {
+                        postTags()
+                    }
+                };
+                function onTError() {
+                    console.log("Error")
+                };
+                function tagInArray(data) {
+                    for (var i = 0; i < data.length; i++) {
+                        for (var j = 0; j < vm.tagArray.length; j++) {
+                            if (data[i].tagName.toLowerCase() == vm.tagArray[j].toLowerCase()) {
+                                vm.tagArray.splice(j, 1);
+                            }
+                        }
+                    };
+                    console.log(vm.tagArray);
+                    if (vm.tagArray.length > 0) {
+                        postTags();
+                    }
+                    else {
+                        console.log(vm.postTagsArray)
+                        postFoods();
+                        console.log(result)
+                    }
+                };
+                function postTags() {
+                    var tags = {
+                        tagNames: vm.tagArray
+                    };
+                    $http.post("/api/tags", tags)
+                        .then(onTPSuccess, onTPError);
+                };
+                function onTPSuccess(data) {
+                    console.log(data.data);
+                    vm.postTagsArray = vm.postTagsArray.concat(data.data);
+                    console.log(vm.postTagsArray);
+                    postFoods();
+                };
+                function onTPError() {
+                    console.log("Error Posting Tags!")
+                };
+                function postFoods() {
+                    vm.food.personId = vm.personId;
+                    $http.post("/api/food", vm.food)
+                        .then(onFoodPSuccess, onFoodPError);
+                };
+                function onFoodPSuccess(data) {
+                    console.log(data.data);
+                    vm.food = {};
+                    $scope.userForm.$setPristine();
+                    vm.image = null;
+                    if (vm.postTagsArray.length > 0) {
+                        var resultArray = vm.postTagsArray.map(function (elm) {
+                            return { foodId: data.data, TagId: elm.id };
+                        })
+                        postFoodTags(resultArray);
+                    }
+                    else {
+                        vm.jsTags.tags = {};
+                        renderFood();
+                    }
+
+                };
+                function onFoodPError() {
+                    console.log("Error uploading foods")
+                };
+                function postFoodTags(array) {
+                    $http.post("/api/foodtags", array)
+                        .then(onFoodTSuccess, onFoodTError);
+                };
+                function onFoodTSuccess(data) {
+                    console.log(data)
+                    vm.jsTags.tags = {};
+                    renderFood();
+                };
+                function onFoodTError() {
+                    console.log("Error posting FoodTags")
+                };
+                function dataURItoBlob(dataURI) {
+                    var binary = atob(dataURI.split(',')[1]);
+                    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    var array = [];
+                    for (var i = 0; i < binary.length; i++) {
+                        array.push(binary.charCodeAt(i));
+                    }
+                    return new Blob([new Uint8Array(array)], {
+                        type: mimeString
+                    });
+                };
+                function _readProfile(blob) {
+                    Cropper.encode((vm.file = blob)).then(function (dataUrl) {
+                        vm.dataUrl = dataUrl;
+                    });
+                };
+                function _getFoodTags(array) {
+                    vm.tagsList = [];
+                    for (var i = 0; i < array.length; i++) {
+                        if (array[i].tags !== null) {
+                            for (var j = 0; j < array[i].tags.length; j++) {
+                                vm.tagsList.push(array[i].tags[j].tagName)
+                            }
+                        }
+                    };
+                    console.log(vm.tagsList);
+                    vm.tagsList = _removeAndCount(vm.tagsList);
+                    console.log(vm.tagsList)
+                };
+                function _removeAndCount(arr) {
+                    var a = [], b = [], prev;
+
+                    arr.sort();
+                    for (var i = 0; i < arr.length; i++) {
+                        if (arr[i] !== prev) {
+                            a.push(arr[i]);
+                            b.push(1);
+                        } else {
+                            b[b.length - 1]++;
+                        }
+                        prev = arr[i];
+                    }
+                    return a.map(function (value, index) {
+                        return {
+                            tagName: value,
+                            count: b[index]
+                        }
+                    });
+                };
+                function _includeTags(tag) {
+                    var i = $.inArray(tag, vm.filteredTags);
+                    if (i > -1) {
+                        vm.filteredTags.splice(i, 1);
+                    } else {
+                        vm.filteredTags.push(tag)
+                    }
+                };
+                function _tagFilter(food) {
+                    if (vm.filteredTags.length > 0) {
+                        if (food.tags !== null) {
+                            for (var i = 0; i < food.tags.length; i++)
+                            {
+                                if ($.inArray(food.tags[i].tagName, vm.filteredTags) > -1)
+                                    return food;
+                            }
+                        }
+                        else {
+                            return;
+                        }
+                    }
+                    else {
+                        return food;
+                    }
+                };
+                function _showDelete(index) {
+                    if (vm.foodIndex == null) {
+                        vm.foodIndex = index;
+                        vm.showDeleteItem = true;
+                    }
+                    else {
+                        vm.foodIndex = null;
+                        vm.showDeleteItem = false;
+                    }
+                };
+
+                function _isShowingDelete(index) {
+                    return vm.foodIndex === index && vm.showDeleteItem === true;
+                };
+                function _delete(foodId) {
+                    $http.delete("/api/food/" + foodId)
+                        .then(onDelSuccess, onDelError);
+                };
+                function onDelSuccess(data) {
+                    vm.foodIndex = null;
+                    renderFood();
+                };
+                function onDelError() {
+                    console.log("Error Deleting Food!")
+                };
+            };
+
+        })();
+
+    </script>
+
+
+
+
+}

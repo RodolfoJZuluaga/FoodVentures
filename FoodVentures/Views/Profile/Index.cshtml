@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Profile</h2>
+<hr />
+<div class="row">
+    <dl class="dl-horizontal col-md-6">
+        <dt>Email:</dt>
+        <dd>rzla89@gmail.com</dd>
+        <dt>First Name:</dt>
+        <dd>Tito</dd>
+        <dt>Last Name:</dt>
+        <dd>Zulu</dd>
+        <dt>Password:</dt>
+        <dd>@Html.ActionLink("Change your password", "ChangePassword")</dd>
+        <dt>Location:</dt>
+        <dd>Los Angeles, CA</dd>
+        <dt>Favorite Foods:</dt>
+        <dd>Pizza</dd>
+        <dt>Favorite Destination:</dt>
+        <dd>Manila</dd>
+        <dt>Bio:</dt>
+        <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent nec erat ut ante porttitor commodo. Duis rhoncus massa sit amet mauris tincidunt, ut rutrum magna fermentum. Sed rutrum leo mauris, in fermentum orci congue scelerisque. Nulla molestie erat sed diam tempus, ac consectetur nulla elementum. Nunc nec nulla et nibh pretium auctor. Vivamus at euismod turpis. Pellentesque sit amet ipsum consectetur, blandit orci quis, tincidunt lacus.</dd>
+    </dl>
+    <dl class="col-md-6">
+        <dt>Profile Picture:</dt>
+        <dd><img class="img-responsive" style="height:200px;width:200px;" src="http://i.imgur.com/5hYrF3l.jpg" /></dd>
+    </dl>
+</div>
+

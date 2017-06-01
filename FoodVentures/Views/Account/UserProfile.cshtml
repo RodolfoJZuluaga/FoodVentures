@@ -1,0 +1,220 @@
+﻿@model FoodVentures.Models.Domain.Person
+@{
+    ViewBag.Title = "UserProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/ngCropper.all.css" rel="stylesheet" />
+<div ng-controller="personController as personCtrl">
+    <h2>{{personCtrl.message}}</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#" ng-click="personCtrl.showEdit =! personCtrl.showEdit">[Edit]</a>
+        </div>
+        <dl class="dl-horizontal col-md-6">
+            <dt>Email:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.email}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.email" type="text" /></dd>
+            <dt>First Name:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.firstName}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.firstName" type="text" /></dd>
+            <dt>Last Name:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.lastName}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.lastName" type="text" /></dd>
+            <dt>Password:</dt>
+            <dd><a href="/manage/changepassword">Change Your Password</a></dd>
+            <dt>Location:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.location}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.location" type="text" /></dd>
+            <dt>Favorite Foods:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.favoriteFoods}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.favoriteFoods" type="text" /></dd>
+            <dt>Favorite Destination:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.favoriteDestinations}}</dd>
+            <dd ng-show="personCtrl.showEdit"><input class="nopadding" ng-model="personCtrl.item.favoriteDestinations" type="text" /></dd>
+            <dt>Bio:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.bio}}</dd>
+            <dd ng-show="personCtrl.showEdit"><textarea rows="4" class="nopadding" ng-model="personCtrl.item.bio"></textarea></dd>
+            <dd>
+                <div class="btn-group" ng-show="personCtrl.showEdit">
+                    <button class="btn btn-default btn-success" ng-click="personCtrl.edit()">Save</button>
+                    <button class="btn btn-default btn-danger" ng-click="personCtrl.showEdit =! personCtrl.showEdit">Cancel</button>
+                </div>
+            </dd>
+        </dl>
+        <dl class="col-md-6">
+            <dt>
+                Profile Picture:<br /><a class="small" href="#" ng-click="personCtrl.showUpload =! personCtrl.showUpload">[Upload New Picture]</a>
+                <br /><input ng-show="personCtrl.showUpload" type="file" onchange="angular.element(this).scope().readProfile(this.files[0]); jQuery(this).next('input').val(this.value);">
+            </dt>
+            <dd>
+                <img ng-hide="personCtrl.dataUrl" ng-if="personCtrl.item.avatarUrl" class="img-responsive" style="height:200px;width:200px;" src="//rjz.blob.core.windows.net/images/{{personCtrl.item.avatarUrl}}" />
+                <img ng-hide="personCtrl.dataUrl" ng-if="!personCtrl.item.avatarUrl" class="img-responsive" style="height:200px;width:200px;" ng-src="//rjz.blob.core.windows.net/images/a80a35c0-ef3e-4296-b0df-bfcad0f8b0fd" />
+                <div ng-if="personCtrl.dataUrl" class="img-container col-md-6" style="width:250px; height:200px;">
+                    <img ng-if="personCtrl.dataUrl" ng-src="{{personCtrl.dataUrl}}" width="200" height="200"
+                         ng-cropper
+                         ng-cropper-proxy="personCtrl.cropperProxy"
+                         ng-cropper-show="personCtrl.showEvent"
+                         ng-cropper-hide="personCtrl.hideEvent"
+                         ng-cropper-options="personCtrl.options">
+                </div>
+            </dd>
+
+        </dl>
+        <button ng-show="personCtrl.showUpload" class="btn btn-default row col-md-offset-6" ng-click="personCtrl.upload()">Upload</button>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/app/foodVentures.services.person.js"></script>
+    <script src="~/Scripts/ng/ngCropper.all.min.js"></script>
+    <script src="~/Scripts/ng/jsTag.min.js"></script>
+    <script>
+        foodVentures.page.personId = @Model.Id;
+        (function () {
+            'use strict';
+            angular.module('foodVenturesApp')
+                .factory('personService', personServiceFactory);
+            function personServiceFactory() {
+                var aPersonServiceObject = foodVentures.services.person;
+                console.log('Person Service created successfully');
+                return aPersonServiceObject;
+            };
+        })();
+        (function () {
+            'use strict';
+            angular.module('foodVenturesApp').controller('personController', PersonController);
+            PersonController.$inject = ['$scope', 'personService', '$timeout', 'Cropper', '$http' ];
+
+            function PersonController($scope, personService, $timeout, Cropper, $http) {
+                var vm = this;
+                vm.$scope = $scope;
+                vm.personService = personService;
+                vm.$http = $http;
+                vm.showEdit = false;
+                vm.select = _select;
+                vm.edit = _edit;
+                vm.file = null;
+                vm.data = null;
+                vm.$scope.readProfile = _readProfile;
+                vm.preview = _preview;
+                vm.clear = _clear;
+                vm.upload = _upload;
+                vm.test = _test;
+
+                vm.item = {};
+                vm.message = "Profile";
+
+                render();
+                function render() {
+                    console.log("People index page is ready");
+                    vm.select();
+                };
+                function _select() {
+                    vm.personService.select(foodVentures.page.personId, _onSelectSuccess, _onSelectError)
+                };
+                function _onSelectSuccess(data) {
+                    vm.$scope.$apply(function () {
+                        console.log(data);
+                        vm.item = data;
+                    })
+                };
+                function _onSelectError(jqXHR) {
+                    console.log(jqXHR.responseText);
+                };
+                function _edit() {
+                    vm.personService.update(foodVentures.page.personId, vm.item, _onPutSuccess, _onPutError);
+                };
+                function _onPutSuccess(data) {
+                    vm.$scope.$apply(function () {
+                        console.log(data);
+                        vm.showEdit = false;
+                        vm.showUpload = null;
+                        render();
+                    })
+                };
+                function _onPutError(jqXHR) {
+                    console.log(jqXHR.responseText);
+                };
+                function _upload() {
+                    var fd = new FormData();
+                    var imgBlob = dataURItoBlob(vm.dataUrl);
+                    fd.append('file', imgBlob);
+                    $http.post("/api/upload", fd, {
+                        transformRequest: angular.identity,
+                        headers: { 'Content-Type': undefined }
+                    }).then(_onUploadSuccess, _onUploadError);
+                };
+                function _onUploadSuccess(data) {
+                    console.log("uploaded file!");
+                    console.log(data);
+                    vm.item.avatarUrl = data.data;
+                    vm.personService.update(foodVentures.page.personId, vm.item, _onPutSuccess, _onPutError);
+                    vm.dataUrl = null;
+                };
+                function _onUploadError(jqXHR) {
+                    console.log("error!");
+                    console.log(jqXHR.responseText);
+                };
+                function _test() {
+                    console.log(vm.preview.dataUrl)
+                };
+                function dataURItoBlob(dataURI) {
+                    var binary = atob(dataURI.split(',')[1]);
+                    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                    var array = [];
+                    for (var i = 0; i < binary.length; i++) {
+                        array.push(binary.charCodeAt(i));
+                    }
+                    return new Blob([new Uint8Array(array)], {
+                        type: mimeString
+                    });
+                };
+
+
+                //ngCropper
+                function _readProfile(blob) {
+                    Cropper.encode((vm.file = blob)).then(function (dataUrl) {
+                        vm.dataUrl = dataUrl;
+                        $timeout(_hideCropper);
+                        $timeout(_showCropper);  // wait for $digest to set image's src
+                    });
+                };
+                function _preview() {
+                    if (!vm.file || !vm.data) return;
+                    Cropper.crop(vm.file, vm.data).then(Cropper.encode).then(function (dataUrl) {
+                        (vm.preview || (vm.preview = {})).dataUrl = dataUrl;
+                    });
+                };
+                function _clear(degrees) {
+                    if (!$scope.cropper.first) return;
+                    $scope.cropper.first('clear');
+                };
+                function _showCropper() {
+                    vm.$scope.$broadcast(vm.showEvent);
+                };
+                function _hideCropper() {
+                    vm.$scope.$broadcast(vm.hideEvent);
+                };
+                //ngcropper options
+                vm.showEvent = 'show';
+                vm.hideEvent = 'hide';
+                vm.$scope.cropper = {};
+                vm.cropperProxy = 'cropper.first';
+                vm.options = {
+                    maximize: true,
+                    aspectRatio: 1 / 1,
+                    crop: function (dataNew) {
+                        vm.data = dataNew;
+                    }
+                };
+            };
+
+        })();
+    </script>
+
+
+
+}
