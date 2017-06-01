@@ -573,6 +573,7 @@
     <Content Include="assets\vendor\superfish\js\supersubs.js" />
     <Content Include="assets\vendor\wow\animate.css" />
     <Content Include="assets\vendor\wow\wow.min.js" />
+    <Content Include="Content\angular-bootstrap-lightbox.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -1426,6 +1427,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\ng\angular-bootstrap-lightbox.js" />
     <Content Include="Scripts\ng\jsTag.debug.js" />
     <Content Include="Scripts\ng\jsTag.min.js" />
     <Content Include="Scripts\ng\ngCropper.all.min.js" />
