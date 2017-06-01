@@ -5,6 +5,7 @@
 }
 <link href="~/Content/jsTag.css" rel="stylesheet" />
 <link href="~/Content/ngCropper.all.css" rel="stylesheet" />
+<link href="~/Content/angular-bootstrap-lightbox.css" rel="stylesheet" />
 <style>
     /*.tags1 {
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -151,26 +152,26 @@
                         <div class="item-wrap">
                             <figure class="effect-goliath captions">
                                 <img width="200" height="200" src="//rjz.blob.core.windows.net/images/{{food.url}}">
-                                @*<figcaption>
-                                        <a href="portfolio-item.html">View more</a>
-                                    </figcaption>*@
+                                <figcaption>
+                                        <a ng-click="dash.openLightboxModel(foodIndex)">View more</a>
+                                    </figcaption>
                             </figure>
                             <div class="portfolio-caption">
                                 <p class="pull-right" ng-show="dash.isShowingDelete(foodIndex)">
                                     Delete Food?: <button class="btn btn-primary btn-xs" ng-click="dash.delete(food.id)">Yes</button> / <button class="btn btn-primary btn-xs" ng-click="dash.showDelete(foodIndex)">No</button>
                                 </p>
-                                    <h4 class="font-accident-one-normal uppercase">
-                                        {{food.name}}
-                                        <a class="pull-right" ng-click="dash.showDelete(foodIndex)" ng-hide="dash.isShowingDelete(foodIndex)">
-                                            <i class="fa fa-trash-o nopadding" ng-show="dash.personId == dash.currentUserId"></i>
-                                        </a>
-                                    </h4>
-                                    <p>{{food.comment}}</p>
-                                    <div class="dividewhite1"></div>
-                                    <div class="portfolio-date">
-                                        <p><span class="icon-clock"></span>{{food.dateCreated | date:"yyyy/MM/dd"}}</p><br />
-                                        <p><span class="icon-tag" ng-repeat="tag in food.tags"><small style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif; ">{{tag.tagName}} </small></span></p>
-                                    </div>
+                                <h4 class="font-accident-one-normal uppercase">
+                                    {{food.name}}
+                                    <a class="pull-right" ng-click="dash.showDelete(foodIndex)" ng-hide="dash.isShowingDelete(foodIndex)">
+                                        <i class="fa fa-trash-o nopadding" ng-show="dash.personId == dash.currentUserId"></i>
+                                    </a>
+                                </h4>
+                                <p>{{food.comment}}</p>
+                                <div class="dividewhite1"></div>
+                                <div class="portfolio-date">
+                                    <p><span class="icon-clock"></span>{{food.dateCreated | date:"yyyy/MM/dd"}}</p><br />
+                                    <p><span class="icon-tag" ng-repeat="tag in food.tags"><small style="font-family: Helvetica Neue, Helvetica, Arial, sans-serif; ">{{tag.tagName}} </small></span></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -185,6 +186,7 @@
     <script src="~/Scripts/ng/ngCropper.all.min.js"></script>
     <script src="~/Scripts/ng/jsTag.debug.js"></script>
     <script src="~/Scripts/ng/jsTag.min.js"></script>
+    <script src="~/Scripts/ng/angular-bootstrap-lightbox.js"></script>
     <script>
         foodVentures.page.personId = @Model.Item1;
         foodVentures.page.currentUserId = @Model.Item2;
@@ -194,9 +196,9 @@
         (function () {
             'use strict';
             angular.module('foodVenturesApp').controller('dashboardController', DashboardController);
-            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection'];
+            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection', 'Lightbox'];
 
-            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection) {
+            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection, Lightbox) {
                 var vm = this;
                 vm.$scope = $scope;
                 vm.$http = $http;
@@ -230,6 +232,7 @@
                 vm.isShowingDelete = _isShowingDelete;
                 vm.showDeleteItem = false;
                 vm.delete = _delete;
+                vm.openLightboxModel = _openLightboxModel;
 
                 render();
                 function render() {
@@ -476,6 +479,9 @@
                 function onDelError() {
                     console.log("Error Deleting Food!")
                 };
+                function _openLightboxModel(index) {
+                    Lightbox.openModal(vm.foodItems, index);
+                }
             };
 
         })();
