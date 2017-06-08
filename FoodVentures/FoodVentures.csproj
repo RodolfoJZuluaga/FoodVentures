@@ -241,12 +241,14 @@
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Domain\Food.cs" />
+    <Compile Include="Models\Domain\Location.cs" />
     <Compile Include="Models\Domain\Person.cs" />
     <Compile Include="Models\Domain\Tag.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Requests\FoodAddRequest.cs" />
     <Compile Include="Models\Requests\FoodTagsAddRequest.cs" />
+    <Compile Include="Models\Requests\LocationAddRequest.cs" />
     <Compile Include="Models\Requests\PersonAddRequest.cs" />
     <Compile Include="Models\Requests\PersonUpdateRequest.cs" />
     <Compile Include="Models\Requests\TagsAddRequest.cs" />
@@ -611,6 +613,7 @@
     <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
+    <Content Include="Scripts\app\directives\googleplace.js" />
     <Content Include="Scripts\app\foodVentures.js" />
     <Content Include="Scripts\app\FoodVenturesApp.js" />
     <Content Include="ApplicationInsights.config">
@@ -1430,6 +1433,7 @@
     <Content Include="Scripts\ng\angular-bootstrap-lightbox.js" />
     <Content Include="Scripts\ng\jsTag.debug.js" />
     <Content Include="Scripts\ng\jsTag.min.js" />
+    <Content Include="Scripts\ng\ng-map.min.js" />
     <Content Include="Scripts\ng\ngCropper.all.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />

@@ -10,11 +10,11 @@ namespace FoodVentures.Models.Domain
         public int Id { get; set; }
         public int PersonId { get; set; }
         public string Name { get; set; }
-        public string Location { get; set; }
         public string Comment { get; set; }
         public DateTime DateCreated { get; set; }
         public string Url { get; set; }
         public List<Tag> Tags { get; set; }
+        public Location Location { get; set; }
 
     }
 }
