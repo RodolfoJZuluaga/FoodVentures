@@ -60,8 +60,14 @@
                     Show Map
                 </button>
                 <div ng-show="dash.showMap">
-                    <ng-map zoom="14" center="[34.0522342, -118.2436849]">
-                        <marker ng-repeat="pos in dash.positions" position="{{pos.latitude}},{{pos.longitude}}"></marker>
+                    <ng-map default-style="true" zoom="14" center="[34.0522342, -118.2436849]">
+                        <marker ng-repeat="food in dash.foodItems" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
+                        <info-window id="foo-iw">
+                            <div ng-non-bindable="">
+                                name: {{dash.markerWindow.name}}<br />
+                                Location : {{dash.markerWindow.location.name}}<br />
+                            </div>
+                        </info-window>
                     </ng-map>
                 </div>
                 <div ng-show="dash.personId == dash.currentUserId">
@@ -247,7 +253,6 @@
                 vm.openLightboxModel = _openLightboxModel;
                 vm.showForm = false;
                 vm.showMap = true;
-                vm.positions = [];
                 vm.getPositions = _getPositions;
                 vm.cities = [];
                 vm.filteredCities = [];
@@ -256,6 +261,9 @@
                 vm.city = null;
                 vm.setCity = _setCity;
                 vm.getBounds = _getBounds;
+                vm.markerWindow = null;
+                vm.showDetail = _showDetail;
+                vm.map = null;
 
                 render();
                 function render() {
@@ -279,7 +287,7 @@
                     vm.foodItems = data.data;
                     console.log(data.data);
                     _getFoodTags(vm.foodItems);
-                    vm.getPositions(vm.foodItems);
+                    vm.getPositions();
                 };
                 function onFError(jqXHR) {
                     console.log(jqXHR.responseText);
@@ -507,31 +515,30 @@
                 function _openLightboxModel(index) {
                     Lightbox.openModal(vm.foodItems, index);
                 };
-                function _getPositions(arr) {
-                    vm.positions = [];
-                    for (var i = 0; i < arr.length; i++) {
-                        if (arr[i].location) {
-                            vm.positions.push(arr[i].location);
-                        }
-                    }
-                    _getBounds();
+                function _getPositions() {
                     var cityArray = [];
-                    for (var j = 0; j < vm.positions.length; j++) {
-                            cityArray.push(vm.positions[j].city);
+                    for (var i = 0; i < vm.foodItems.length; i++) {
+                        if (vm.foodItems[i].location) {
+                            cityArray.push(vm.foodItems[i].location.city);
+                        }  
                     }
                     vm.cities = _removeAndCount(cityArray);
+                    _getBounds();
                     console.log(vm.cities);
                 };
                 function _getBounds() {
                     var bounds = new google.maps.LatLngBounds();
-                    for (var i = 0; i < vm.positions.length; i++) {
-                        var latlng = new google.maps.LatLng(vm.positions[i].latitude, vm.positions[i].longitude);
-                        bounds.extend(latlng);
+                    for (var i = 0; i < vm.foodItems.length; i++) {
+                        if (vm.foodItems[i].location) {
+                            var latlng = new google.maps.LatLng(vm.foodItems[i].location.latitude, vm.foodItems[i].location.longitude);
+                            bounds.extend(latlng);
+                        }
                     }
 
                     NgMap.getMap().then(function (map) {
                         map.setCenter(bounds.getCenter());
-                        map.setZoom(2);
+                        map.setZoom(1);
+                        vm.map = map;
                         //map.fitBounds(bounds);
                     });
                 };
@@ -561,6 +568,17 @@
                             });
                     });
                 };
+
+                function _showDetail(e, food) {
+                    console.log('map', vm.map);
+                    vm.markerWindow = food;
+                    console.log(food)
+                    var latlng = new google.maps.LatLng(food.location.latitude, food.location.longitude);
+                    vm.map.showInfoWindow('foo-iw', this);
+                    vm.map.panTo(latlng);
+                    vm.map.setZoom(13);
+                };
+
 
             };
 
