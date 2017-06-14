@@ -115,7 +115,7 @@
                                     <h4 class="font-accident-one-bold uppercase">Destinations</h4>
                                     <ul>
                                         <li class="cat-item" ng-repeat="city in dash.cities">
-                                            <a href="#">{{city.tagName}}</a>
+                                            <a href="" ng-click="dash.setCity(city.tagName)">{{city.tagName}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -144,12 +144,12 @@
                 <div class="container">
                     <div class="port-filter block-centered">
                         <ul>
-                            <li ng-repeat="city in dash.cities"><a href="" ng-click="dash.city=city.tagName">{{city.tagName}}</a></li>
+                            <li ng-repeat="city in dash.cities"><a href="" ng-click="dash.city=city.tagName;dash.setCity(city.tagName)">{{city.tagName}}</a></li>
                         </ul>
                     </div>
                     <div class="port-filter block-centered">
                         <ul>
-                            <li><a href="" ng-click="dash.city=null">Show All</a></li>
+                            <li><a href="" ng-click="dash.city=null;dash.getBounds()">Show All</a></li>
                         </ul>
                     </div>
                     <div class="dividewhite4"></div>
@@ -207,9 +207,9 @@
         (function () {
             'use strict';
             angular.module('foodVenturesApp').controller('dashboardController', DashboardController);
-            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection', 'Lightbox', 'NgMap'];
+            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection', 'Lightbox', 'NgMap', 'GeoCoder'];
 
-            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection, Lightbox, NgMap) {
+            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection, Lightbox, NgMap, GeoCoder) {
                 var vm = this;
                 vm.$scope = $scope;
                 vm.$http = $http;
@@ -254,6 +254,8 @@
                 vm.includeCities = _includeCities;
                 vm.cityFilter = _cityFilter;
                 vm.city = null;
+                vm.setCity = _setCity;
+                vm.getBounds = _getBounds;
 
                 render();
                 function render() {
@@ -529,7 +531,8 @@
 
                     NgMap.getMap().then(function (map) {
                         map.setCenter(bounds.getCenter());
-                        map.fitBounds(bounds);
+                        map.setZoom(2);
+                        //map.fitBounds(bounds);
                     });
                 };
                 function _includeCities(city) {
@@ -548,6 +551,15 @@
                     else {
                         return food;
                     }
+                };
+                function _setCity(city) {
+                    NgMap.getMap().then(function (map) {
+                        GeoCoder.geocode({ address: city })
+                            .then(function (result) {
+                                map.setCenter(result[0].geometry.location);
+                                map.setZoom(11);
+                            });
+                    });
                 };
 
             };
