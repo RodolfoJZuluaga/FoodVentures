@@ -262,3 +262,4 @@ __pycache__/
 FoodVentures/Web.config
 FoodVentures/Web.Debug.config
 FoodVentures/Views/Test/Index.cshtml
+FoodVentures/Web.Release.config
