@@ -12,7 +12,7 @@ namespace FoodVentures.Models.Requests
         public int PersonId { get; set; }
         [Required]
         public string Name { get; set; }
-        public string Location { get; set; }
+        public LocationAddRequest Location { get; set; }
         [Required]
         public string Comment { get; set; }
         [Required]

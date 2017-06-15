@@ -7,11 +7,6 @@
 <link href="~/Content/ngCropper.all.css" rel="stylesheet" />
 <link href="~/Content/angular-bootstrap-lightbox.css" rel="stylesheet" />
 <style>
-    /*.tags1 {
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        line-height: 1.42857143;
-        color: #333;
-    }*/
     .form-horizontal .form-control {
         width: 97%;
         border-style: solid;
@@ -56,43 +51,59 @@
         </div>
         <div class="col-md-6">
             <div class="row">
-                <form name="userForm" class="form-horizontal" ng-submit="dash.submitForm(userForm.$valid)" novalidate ng-show="dash.personId == dash.currentUserId">
-                    <div class="form-group" ng-class="{'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
-                        <label class="control-label col-md-2">Food Name</label>
-                        <div class="col-md-10">
-                            <input type="text" name="name" class="form-control" ng-model="dash.food.name" required>
+                <button class="btn btn-default" ng-click="dash.showForm=true;dash.showMap=false" ng-show="dash.personId == dash.currentUserId">Submit New Food</button> <button class="btn btn-default" ng-show="dash.personId == dash.currentUserId" ng-click="dash.showMap=true;dash.showForm=false">
+                    Show Map
+                </button>
+                <div ng-show="dash.showMap">
+                    <ng-map default-style="true" zoom="14" center="[34.0522342, -118.2436849]">
+                        <marker ng-repeat="food in dash.foodItems" id="m{{food.id}}" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
+                        <info-window id="foo-iw">
+                            <div ng-non-bindable="">
+                                name: {{dash.markerWindow.name}}<br />
+                                Location : {{dash.markerWindow.location.name}}<br />
+                            </div>
+                        </info-window>
+                    </ng-map>
+                </div>
+                <div ng-show="dash.personId == dash.currentUserId">
+                    <form name="userForm" class="form-horizontal" ng-submit="dash.submitForm(userForm.$valid)" novalidate ng-show="dash.showForm">
+                        <div class="form-group" ng-class="{'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+                            <label class="control-label col-md-2">Food Name</label>
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control" ng-model="dash.food.name" required>
+                            </div>
+                            <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-center">Your name is required.</p>
                         </div>
-                        <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-center">Your name is required.</p>
-                    </div>
-                    <div class="form-group" ng-class="{'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
-                        <label class="control-label col-md-2">Location</label>
-                        <div class="col-md-10">
-                            <input type="text" name="location" class="form-control" ng-model="dash.food.location" required>
+                        <div class="form-group" ng-class="{'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
+                            <label class="control-label col-md-2">Location</label>
+                            <div class="col-md-10">
+                                <input type="text" name="location" class="form-control" ng-model="location" details="dash.food.location" googleplace placeholder="" required>
+                            </div>
+                            <p ng-show="userForm.location.$invalid && !userForm.location.$pristine" class="help-block text-center">Location is required.</p>
                         </div>
-                        <p ng-show="userForm.location.$invalid && !userForm.location.$pristine" class="help-block text-center">Location is required.</p>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-2">Comment</label>
-                        <div class="col-md-10">
-                            <textarea rows="4" class="form-control" id="comment" ng-model="dash.food.comment"></textarea>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Comment</label>
+                            <div class="col-md-10">
+                                <textarea rows="4" class="form-control" id="comment" ng-model="dash.food.comment"></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-2" for="tags">Tags:</label>
-                        <div class="col-md-10">
-                            <js-tag js-tag-options="dash.jsTagOptions" id="tags"></js-tag>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="tags">Tags:</label>
+                            <div class="col-md-10">
+                                <js-tag js-tag-options="dash.jsTagOptions" id="tags"></js-tag>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="file" ng-model="dash.image" onchange="angular.element(this).scope().readProfile(this.files[0])">
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="file" ng-model="dash.image" onchange="angular.element(this).scope().readProfile(this.files[0])">
+                            </div>
                         </div>
-                    </div>
-                    <!-- SUBMIT BUTTON -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-primary btn-block" ng-click="dash.upload()" ng-disabled="userForm.$invalid">Submit FoodVenture!</button>
-                    </div>
-                </form>
+                        <!-- SUBMIT BUTTON -->
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary btn-block" ng-click="dash.upload()" ng-disabled="userForm.$invalid">Submit FoodVenture!</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
@@ -104,14 +115,8 @@
                                 <div class="widget_categories">
                                     <h4 class="font-accident-one-bold uppercase">Destinations</h4>
                                     <ul>
-                                        <li class="cat-item cat-item-21">
-                                            <a href="#">Los Angeles</a>
-                                        </li>
-                                        <li class="cat-item cat-item-22">
-                                            <a href="#">Tokyo</a>
-                                        </li>
-                                        <li class="cat-item cat-item-23">
-                                            <a href="#">Manila</a>
+                                        <li class="cat-item" ng-repeat="city in dash.cities">
+                                            <a href="" ng-click="dash.setCity(city.tagName)">{{city.tagName}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -138,23 +143,26 @@
                 <div class="dividewhite2"></div>
 
                 <div class="container">
-                    <div id="isotope-filters" class="port-filter block-centered">
+                    <div class="port-filter block-centered">
                         <ul>
-                            <li><a href="#cat1" data-filter="*">Los Angeles</a></li>
-                            <li><a href="#cat2" data-filter=".web">Tokyo</a></li>
-                            <li><a href="#cat3" data-filter=".marketing">Mexico City</a></li>
+                            <li ng-repeat="city in dash.cities"><a href="" ng-click="dash.city=city.tagName;dash.setCity(city.tagName)">{{city.tagName}}</a></li>
+                        </ul>
+                    </div>
+                    <div class="port-filter block-centered">
+                        <ul>
+                            <li><a href="" ng-click="dash.city=null;dash.getBounds()">Show All</a></li>
                         </ul>
                     </div>
                     <div class="dividewhite4"></div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3" ng-repeat="(foodIndex, food) in dash.foodItems | filter:dash.tagFilter">
+                    <div class="col-md-3" ng-repeat="(foodIndex, food) in dash.foodItems | filter:dash.cityFilter | filter:dash.tagFilter">
                         <div class="item-wrap">
                             <figure class="effect-goliath captions">
                                 <img width="200" height="200" src="//rjz.blob.core.windows.net/images/{{food.url}}">
                                 <figcaption>
-                                        <a ng-click="dash.openLightboxModel(foodIndex)">View more</a>
-                                    </figcaption>
+                                    <a ng-click="dash.openLightboxModel(foodIndex)">View more</a>
+                                </figcaption>
                             </figure>
                             <div class="portfolio-caption">
                                 <p class="pull-right" ng-show="dash.isShowingDelete(foodIndex)">
@@ -166,6 +174,7 @@
                                         <i class="fa fa-trash-o nopadding" ng-show="dash.personId == dash.currentUserId"></i>
                                     </a>
                                 </h4>
+                                <p ng-show="food.location"><a href="" ng-click="dash.showDetail(e, food)">{{food.location.name}}, {{food.location.city}}</a></p>
                                 <p>{{food.comment}}</p>
                                 <div class="dividewhite1"></div>
                                 <div class="portfolio-date">
@@ -183,10 +192,8 @@
 
 
 @section scripts{
-    <script src="~/Scripts/ng/ngCropper.all.min.js"></script>
-    <script src="~/Scripts/ng/jsTag.debug.js"></script>
-    <script src="~/Scripts/ng/jsTag.min.js"></script>
-    <script src="~/Scripts/ng/angular-bootstrap-lightbox.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDO10pn3Yp7uBBOt6moWybMK_9jlmtaN_E&libraries=placeses,visualization,drawing,geometry,places"></script>
+    <script src="~/Scripts/app/directives/googleplace.js"></script>
     <script>
         foodVentures.page.personId = @Model.Item1;
         foodVentures.page.currentUserId = @Model.Item2;
@@ -196,9 +203,9 @@
         (function () {
             'use strict';
             angular.module('foodVenturesApp').controller('dashboardController', DashboardController);
-            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection', 'Lightbox'];
+            DashboardController.$inject = ['$scope', '$timeout', 'Cropper', '$http', 'JSTagsCollection', 'Lightbox', 'NgMap', 'GeoCoder'];
 
-            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection, Lightbox) {
+            function DashboardController($scope, $timeout, Cropper, $http, JSTagsCollection, Lightbox, NgMap, GeoCoder) {
                 var vm = this;
                 vm.$scope = $scope;
                 vm.$http = $http;
@@ -214,6 +221,7 @@
                 vm.postTagsArray = [];
                 vm.food = {};
                 vm.image = null;
+                vm.location = null;
                 vm.foodItems = [];
                 vm.tagsList = [];
                 vm.upload = _upload;
@@ -233,6 +241,19 @@
                 vm.showDeleteItem = false;
                 vm.delete = _delete;
                 vm.openLightboxModel = _openLightboxModel;
+                vm.showForm = false;
+                vm.showMap = true;
+                vm.getPositions = _getPositions;
+                vm.cities = [];
+                vm.filteredCities = [];
+                vm.includeCities = _includeCities;
+                vm.cityFilter = _cityFilter;
+                vm.city = null;
+                vm.setCity = _setCity;
+                vm.getBounds = _getBounds;
+                vm.markerWindow = null;
+                vm.showDetail = _showDetail;
+                vm.map = null;
 
                 render();
                 function render() {
@@ -256,6 +277,7 @@
                     vm.foodItems = data.data;
                     console.log(data.data);
                     _getFoodTags(vm.foodItems);
+                    vm.getPositions();
                 };
                 function onFError(jqXHR) {
                     console.log(jqXHR.responseText);
@@ -281,7 +303,8 @@
                     console.log("error uploading image");
                     console.log(jqXHR.responseText);
                 };
-                function _test(index, array) {
+                function _test() {
+                    console.log(vm.location)
                 };
                 function getTags() {
                     vm.postTagsArray = [];
@@ -481,7 +504,73 @@
                 };
                 function _openLightboxModel(index) {
                     Lightbox.openModal(vm.foodItems, index);
-                }
+                };
+                function _getPositions() {
+                    var cityArray = [];
+                    for (var i = 0; i < vm.foodItems.length; i++) {
+                        if (vm.foodItems[i].location) {
+                            cityArray.push(vm.foodItems[i].location.city);
+                        }  
+                    }
+                    vm.cities = _removeAndCount(cityArray);
+                    _getBounds();
+                    console.log(vm.cities);
+                };
+                function _getBounds() {
+                    var bounds = new google.maps.LatLngBounds();
+                    for (var i = 0; i < vm.foodItems.length; i++) {
+                        if (vm.foodItems[i].location) {
+                            var latlng = new google.maps.LatLng(vm.foodItems[i].location.latitude, vm.foodItems[i].location.longitude);
+                            bounds.extend(latlng);
+                        }
+                    }
+
+                    NgMap.getMap().then(function (map) {
+                        map.setCenter(bounds.getCenter());
+                        map.setZoom(1);
+                        vm.map = map;
+                        //map.fitBounds(bounds);
+                    });
+                };
+                function _includeCities(city) {
+                    vm.city = city;
+                };
+                function _cityFilter(food) {
+                    if (vm.city) {
+                        if (food.location !== null) {
+                            if (food.location.city == vm.city)
+                                return food;
+                        }
+                        else {
+                            return;
+                        }
+                    }
+                    else {
+                        return food;
+                    }
+                };
+                function _setCity(city) {
+                    NgMap.getMap().then(function (map) {
+                        GeoCoder.geocode({ address: city })
+                            .then(function (result) {
+                                map.setCenter(result[0].geometry.location);
+                                map.setZoom(11);
+                            });
+                    });
+                };
+
+                function _showDetail(e, food) {
+                    console.log('map', vm.map);
+                    console.log(food);
+                    vm.markerWindow = food;
+                    console.log(food)
+                    var latlng = new google.maps.LatLng(food.location.latitude, food.location.longitude);
+                    vm.map.showInfoWindow('foo-iw', 'm' + food.id);
+                    vm.map.panTo(latlng);
+                    vm.map.setZoom(13);
+                };
+
+
             };
 
         })();

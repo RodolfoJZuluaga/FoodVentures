@@ -22,9 +22,14 @@ namespace FoodVentures.Services
                 {
                     paramCollection.AddWithValue("@PersonId", model.PersonId);
                     paramCollection.AddWithValue("@Name", model.Name);
-                    paramCollection.AddWithValue("@Location", model.Location);
                     paramCollection.AddWithValue("@Comment", model.Comment);
                     paramCollection.AddWithValue("@Url", model.Url);
+                    paramCollection.AddWithValue("@LocationName", model.Location.Name);
+                    paramCollection.AddWithValue("@City", model.Location.City);
+                    paramCollection.AddWithValue("@State", model.Location.State);
+                    paramCollection.AddWithValue("@Country", model.Location.Country);
+                    paramCollection.AddWithValue("@Latitude", model.Location.Latitude);
+                    paramCollection.AddWithValue("@Longitude", model.Location.Longitude);
 
                     SqlParameter p = new SqlParameter("@Id", System.Data.SqlDbType.Int);
                     p.Direction = System.Data.ParameterDirection.Output;
@@ -58,7 +63,6 @@ namespace FoodVentures.Services
                             f.Id = reader.GetSafeInt32(startingIndex++);
                             f.PersonId = reader.GetSafeInt32(startingIndex++);
                             f.Name = reader.GetSafeString(startingIndex++);
-                            f.Location = reader.GetSafeString(startingIndex++);
                             f.Comment = reader.GetSafeString(startingIndex++);
                             f.DateCreated = reader.GetSafeDateTime(startingIndex++);
                             f.Url = reader.GetSafeString(startingIndex++);
@@ -83,6 +87,16 @@ namespace FoodVentures.Services
                                 parent.Tags = new List<Tag>();
                             }
                             parent.Tags.Add(tag);
+                            break;
+                        case 2:
+                            int locationId = 0;
+                            Location location = MapLocation(reader, out locationId);
+                            parent = dictionary[locationId];
+                            if (parent.Location == null)
+                            {
+                                parent.Location = new Location();
+                            }
+                            parent.Location = location;
                             break;
                     }
 
@@ -109,6 +123,20 @@ namespace FoodVentures.Services
             t.Id = reader.GetSafeInt32(startingIndex++);
             t.TagName = reader.GetSafeString(startingIndex++);
             return t;
+        }
+        private static Location MapLocation(IDataReader reader, out int parentFoodId)
+        {
+            Location l = new Location();
+            int startingIndex = 0;
+            parentFoodId = reader.GetSafeInt32(startingIndex++);
+            l.Id = reader.GetSafeInt32(startingIndex++);
+            l.Name = reader.GetSafeString(startingIndex++);
+            l.City = reader.GetSafeString(startingIndex++);
+            l.State = reader.GetSafeString(startingIndex++);
+            l.Country = reader.GetSafeString(startingIndex++);
+            l.Latitude = reader.GetSafeDecimal(startingIndex++);
+            l.Longitude = reader.GetSafeDecimal(startingIndex++);
+            return l;
         }
         protected static IDao DataProvider
         {

@@ -26,7 +26,12 @@ namespace FoodVentures
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                       "~/Scripts/angular.js",
                       "~/Scripts/angular-animate.js",
-                      "~/Scripts/ui-bootstrap-tpls-2.5.0.min.js"));
+                      "~/Scripts/ui-bootstrap-tpls-2.5.0.min.js",
+                      "~/Scripts/ng/ngCropper.all.min.js",
+                      "~/Scripts/ng/ng-map.min.js",
+                      "~/Scripts/ng/jsTag.debug.js",
+                      "~/Scripts/ng/jsTag.min.js",
+                      "~/Scripts/ng/angular-bootstrap-lightbox.js"));
             
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/foodVentures.js",
