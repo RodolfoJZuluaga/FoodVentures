@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 FoodVentures/Web.config
 FoodVentures/Web.Debug.config
+FoodVentures/Web.Release.config
