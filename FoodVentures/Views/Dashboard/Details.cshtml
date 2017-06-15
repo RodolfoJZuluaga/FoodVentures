@@ -7,11 +7,6 @@
 <link href="~/Content/ngCropper.all.css" rel="stylesheet" />
 <link href="~/Content/angular-bootstrap-lightbox.css" rel="stylesheet" />
 <style>
-    /*.tags1 {
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-        line-height: 1.42857143;
-        color: #333;
-    }*/
     .form-horizontal .form-control {
         width: 97%;
         border-style: solid;
@@ -61,7 +56,7 @@
                 </button>
                 <div ng-show="dash.showMap">
                     <ng-map default-style="true" zoom="14" center="[34.0522342, -118.2436849]">
-                        <marker ng-repeat="food in dash.foodItems" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
+                        <marker ng-repeat="food in dash.foodItems" id="m{{food.id}}" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
                         <info-window id="foo-iw">
                             <div ng-non-bindable="">
                                 name: {{dash.markerWindow.name}}<br />
@@ -179,7 +174,7 @@
                                         <i class="fa fa-trash-o nopadding" ng-show="dash.personId == dash.currentUserId"></i>
                                     </a>
                                 </h4>
-                                <p ng-show="food.location"><a>{{food.location.name}}, {{food.location.city}}</a></p>
+                                <p ng-show="food.location"><a href="#" ng-click="dash.showDetail(e, food)">{{food.location.name}}, {{food.location.city}}</a></p>
                                 <p>{{food.comment}}</p>
                                 <div class="dividewhite1"></div>
                                 <div class="portfolio-date">
@@ -571,10 +566,11 @@
 
                 function _showDetail(e, food) {
                     console.log('map', vm.map);
+                    console.log(food);
                     vm.markerWindow = food;
                     console.log(food)
                     var latlng = new google.maps.LatLng(food.location.latitude, food.location.longitude);
-                    vm.map.showInfoWindow('foo-iw', this);
+                    vm.map.showInfoWindow('foo-iw', 'm' + food.id);
                     vm.map.panTo(latlng);
                     vm.map.setZoom(13);
                 };
