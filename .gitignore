@@ -261,6 +261,7 @@ __pycache__/
 *.pyc
 FoodVentures/Web.config
 FoodVentures/Web.Debug.config
+<<<<<<< HEAD
 =======
 FoodVentures/Views/Test/Index.cshtml
 >>>>>>> google-maps
