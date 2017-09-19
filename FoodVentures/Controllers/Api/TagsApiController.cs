@@ -13,14 +13,18 @@ namespace FoodVentures.Controllers.Api
     [RoutePrefix("Api/Tags")]
     public class TagsApiController : ApiController
     {
+        ITagsService _tagsService = null;
+        public TagsApiController(ITagsService tagsService)
+        {
+            _tagsService = tagsService;
+        }
         [Route, HttpGet]
         public HttpResponseMessage Select([FromUri]List<string> names)
         {
             List<Tag> list = new List<Tag>();
             try
             {
-                TagsService svc = new TagsService();
-                list = svc.Select(names);
+                list = _tagsService.Select(names);
             }
             catch (Exception ex)
             {
@@ -45,8 +49,7 @@ namespace FoodVentures.Controllers.Api
             }
             try
             {
-                TagsService svc = new TagsService();
-                list = svc.Insert(model);
+                list = _tagsService.Insert(model);
             }
             catch (Exception ex)
             {

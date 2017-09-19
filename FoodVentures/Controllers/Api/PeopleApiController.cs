@@ -13,14 +13,18 @@ namespace FoodVentures.Controllers.Api
     [RoutePrefix("Api/People")]
     public class PeopleApiController : ApiController
     {
+        IPersonService _personService = null;
+        public PeopleApiController(IPersonService personService)
+        {
+            _personService = personService;
+        }
         [Route("{id:int}"), HttpGet]
         public HttpResponseMessage Select(int id)
         {
             Person p = new Person();
             try
             {
-                PersonService svc = new PersonService();
-                p = svc.Select(id);
+                p = _personService.Select(id);
             }
             catch (Exception ex)
             {
@@ -45,8 +49,7 @@ namespace FoodVentures.Controllers.Api
             }
             try
             {
-                PersonService svc = new PersonService();
-                svc.UpdatePerson(model);
+                _personService.UpdatePerson(model);
             }
             catch (Exception ex)
             {

@@ -12,7 +12,7 @@ using WikiDataProvider.Data.Interfaces;
 
 namespace FoodVentures.Services
 {
-    public class TagsService
+    public class TagsService : ITagsService
     {
         public List<Tag> Select(List<string> names)
         {

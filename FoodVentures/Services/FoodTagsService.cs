@@ -11,7 +11,7 @@ using WikiDataProvider.Data.Interfaces;
 
 namespace FoodVentures.Services
 {
-    public class FoodTagsService
+    public class FoodTagsService : IFoodTagsService
     {
         public void Insert(List<FoodTagsAddRequest> list)
         {

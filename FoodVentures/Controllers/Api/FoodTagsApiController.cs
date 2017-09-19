@@ -12,6 +12,11 @@ namespace FoodVentures.Controllers.Api
     [RoutePrefix("api/foodtags")]
     public class FoodTagsApiController : ApiController
     {
+        IFoodTagsService _foodTagsService = null;
+        public FoodTagsApiController(IFoodTagsService foodTagsService)
+        {
+            _foodTagsService = foodTagsService;
+        }
         [Route, HttpPost]
         public HttpResponseMessage Insert(List<FoodTagsAddRequest> list)
         {
@@ -28,8 +33,7 @@ namespace FoodVentures.Controllers.Api
             }
             try
             {
-                FoodTagsService svc = new FoodTagsService();
-                svc.Insert(list);
+                _foodTagsService.Insert(list);
             }
             catch (Exception ex)
             {

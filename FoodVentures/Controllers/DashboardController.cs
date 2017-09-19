@@ -13,6 +13,11 @@ namespace FoodVentures.Controllers
     [RoutePrefix("fv")]
     public class DashboardController : Controller
     {
+        IPersonService _personService = null;
+        public DashboardController(IPersonService personService)
+        {
+            _personService = personService;
+        }
         // GET: Dashboard
         [Route("Index")]
         public ActionResult Index()
@@ -26,20 +31,19 @@ namespace FoodVentures.Controllers
             ItemViewModel<int, int> model = new ItemViewModel<int, int>();
             string id = User.Identity.GetUserId();
             Person p = new Person();
-            PersonService svc = new PersonService();
-            p = svc.SelectByUserId(id);
+            p = _personService.SelectByUserId(id);
             model.Item1 = p.Id;
             model.Item2 = p.Id;
             return View(model);
         }
         [Route("{id:int}")]
-        public ActionResult Details(int id)
+        [Route("{userUrl}")]
+        public ActionResult Details(int id = 0, string userUrl = "")
         {
             ItemViewModel<int, int> model = new ItemViewModel<int, int>();
             string userId = User.Identity.GetUserId();
-            PersonService svc = new PersonService();
             Person targetUser = new Person();
-            targetUser = svc.Select(id);
+            targetUser = _personService.Select(id);
             model.Item1 = targetUser.Id;
             if (userId == null)
             {
@@ -48,7 +52,7 @@ namespace FoodVentures.Controllers
             else
             {
                 Person currentUser = new Person();
-                currentUser = svc.SelectByUserId(userId);
+                currentUser = _personService.SelectByUserId(userId);
                 model.Item2 = currentUser.Id;
                 return View(model);
             }

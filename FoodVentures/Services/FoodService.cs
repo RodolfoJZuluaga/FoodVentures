@@ -12,7 +12,7 @@ using WikiDataProvider.Data.Interfaces;
 
 namespace FoodVentures.Services
 {
-    public class FoodService
+    public class FoodService : IFoodService
     {
         public int Insert(FoodAddRequest model)
         {

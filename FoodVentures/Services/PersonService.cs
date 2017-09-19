@@ -12,7 +12,7 @@ using WikiDataProvider.Data.Interfaces;
 
 namespace FoodVentures.Services
 {
-    public class PersonService
+    public class PersonService : IPersonService
     {
         public Person Select(int id)
         {

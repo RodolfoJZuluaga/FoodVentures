@@ -19,6 +19,11 @@ namespace FoodVentures.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        //IPersonService _personService = null;
+        //public AccountController(IPersonService personService)
+        //{
+        //    _personService = personService;
+        //}
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 

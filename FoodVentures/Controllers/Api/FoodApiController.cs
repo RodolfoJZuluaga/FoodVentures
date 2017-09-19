@@ -13,6 +13,11 @@ namespace FoodVentures.Controllers.Api
     [RoutePrefix("Api/Food")]
     public class FoodApiController : ApiController
     {
+        IFoodService _foodService = null;
+        public FoodApiController(IFoodService foodService)
+        {
+            _foodService = foodService;
+        }
         [Route, HttpPost]
         public HttpResponseMessage Insert(FoodAddRequest model)
         {
@@ -30,8 +35,7 @@ namespace FoodVentures.Controllers.Api
             }
             try
             {
-                FoodService svc = new FoodService();
-                id = svc.Insert(model);
+                id = _foodService.Insert(model);
             }
             catch (Exception ex)
             {
@@ -43,16 +47,21 @@ namespace FoodVentures.Controllers.Api
         public HttpResponseMessage GetFoodById(int personId)
         {
 
-            FoodService svc = new FoodService();
             List<Food> list = new List<Food>();
-            list = svc.GetFoodById(personId);
+            list = _foodService.GetFoodById(personId);
             return Request.CreateResponse(HttpStatusCode.OK, list);
         }
         [Route("{id:int}"), HttpDelete]
         public HttpResponseMessage DeleteFoodById(int id)
         {
-            FoodService svc = new FoodService();
-            svc.Delete(id);
+            try
+            {
+                _foodService.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
             return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
