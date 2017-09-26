@@ -38,6 +38,7 @@ namespace FoodVentures.Services
                     p.Bio = reader.GetSafeString(startingIndex++);
                     p.AvatarUrl = reader.GetSafeString(startingIndex++);
                     p.Email = reader.GetSafeString(startingIndex++);
+                    p.FvUrl = reader.GetSafeString(startingIndex++);
                 });
             return p;
         }
@@ -55,6 +56,7 @@ namespace FoodVentures.Services
                     paramCollection.AddWithValue("@FavoriteDestinations", model.FavoriteDestinations);
                     paramCollection.AddWithValue("@Bio", model.Bio);
                     paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
+                    paramCollection.AddWithValue("@FvUrl", model.FvUrl);
 
                     SqlParameter p = new SqlParameter("@Id", System.Data.SqlDbType.Int);
                     p.Direction = System.Data.ParameterDirection.Output;
@@ -92,6 +94,7 @@ namespace FoodVentures.Services
                     p.Bio = reader.GetSafeString(startingIndex++);
                     p.AvatarUrl = reader.GetSafeString(startingIndex++);
                     p.Email = reader.GetSafeString(startingIndex++);
+                    p.FvUrl = reader.GetSafeString(startingIndex++);
                 });
             return p;
         }
@@ -109,8 +112,37 @@ namespace FoodVentures.Services
                     paramCollection.AddWithValue("@FavoriteDestinations", model.FavoriteDestinations);
                     paramCollection.AddWithValue("@Bio", model.Bio);
                     paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
+                    paramCollection.AddWithValue("@FvUrl", model.FvUrl);
                 }, returnParameters: null
                 );
+        }
+        public Person SelectByUserUrl(string userUrl)
+        {
+            Person p = new Person();
+            DataProvider.ExecuteCmd(
+                GetConnection,
+                "People_SelectIdByUserUrl",
+                inputParamMapper: delegate (SqlParameterCollection paramCollection)
+                {
+                    paramCollection.AddWithValue("@UserUrl", userUrl);
+                },
+                map: delegate (IDataReader reader, short set)
+                {
+                    int startingIndex = 0;
+                    p.Id = reader.GetSafeInt32(startingIndex++);
+                    p.DateCreated = reader.GetSafeDateTime(startingIndex++);
+                    p.DateModified = reader.GetSafeDateTime(startingIndex++);
+                    p.FirstName = reader.GetSafeString(startingIndex++);
+                    p.LastName = reader.GetSafeString(startingIndex++);
+                    p.Location = reader.GetSafeString(startingIndex++);
+                    p.FavoriteFoods = reader.GetSafeString(startingIndex++);
+                    p.FavoriteDestinations = reader.GetSafeString(startingIndex++);
+                    p.Bio = reader.GetSafeString(startingIndex++);
+                    p.AvatarUrl = reader.GetSafeString(startingIndex++);
+                    p.Email = reader.GetSafeString(startingIndex++);
+                    p.FvUrl = reader.GetSafeString(startingIndex++);
+                });
+            return p;
         }
 
         protected static IDao DataProvider

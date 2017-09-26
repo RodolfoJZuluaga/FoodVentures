@@ -46,6 +46,10 @@
                         <th>Bio:</th>
                         <td>{{dash.person.bio}} </td>
                     </tr>
+                    <tr>
+                        <th>FoodVenture URL:</th>
+                        <td><a ng-href="{{dash.person.fvUrl}}">{{dash.person.fvUrl}}</a></td>
+                    </tr>
                 </table>
             </div>
         </div>
@@ -54,55 +58,57 @@
                 <button class="btn btn-default" ng-click="dash.showForm=true;dash.showMap=false" ng-show="dash.personId == dash.currentUserId">Submit New Food</button> <button class="btn btn-default" ng-show="dash.personId == dash.currentUserId" ng-click="dash.showMap=true;dash.showForm=false">
                     Show Map
                 </button>
-                <div ng-show="dash.showMap">
-                    <ng-map default-style="true" zoom="14" center="[34.0522342, -118.2436849]">
-                        <marker ng-repeat="food in dash.foodItems" id="m{{food.id}}" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
-                        <info-window id="foo-iw">
-                            <div ng-non-bindable="">
-                                name: {{dash.markerWindow.name}}<br />
-                                Location : {{dash.markerWindow.location.name}}<br />
+                <div style="padding-top:5px;">
+                    <div ng-show="dash.showMap">
+                        <ng-map default-style="true" zoom="14" center="[34.0522342, -118.2436849]">
+                            <marker ng-repeat="food in dash.foodItems" id="m{{food.id}}" position="{{food.location.latitude}},{{food.location.longitude}}" on-click="dash.showDetail(food)"></marker>
+                            <info-window id="foo-iw">
+                                <div ng-non-bindable="">
+                                    name: {{dash.markerWindow.name}}<br />
+                                    Location : {{dash.markerWindow.location.name}}<br />
+                                </div>
+                            </info-window>
+                        </ng-map>
+                    </div>
+                    <div ng-show="dash.personId == dash.currentUserId">
+                        <form name="userForm" id="userForm" class="form-horizontal" ng-submit="dash.submitForm(userForm.$valid)" novalidate ng-show="dash.showForm">
+                            <div class="form-group" ng-class="{'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+                                <label class="control-label col-md-2">Food Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="name" class="form-control" ng-model="dash.food.name" required>
+                                </div>
+                                <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-center">Your name is required.</p>
                             </div>
-                        </info-window>
-                    </ng-map>
-                </div>
-                <div ng-show="dash.personId == dash.currentUserId">
-                    <form name="userForm" id="userForm" class="form-horizontal" ng-submit="dash.submitForm(userForm.$valid)" novalidate ng-show="dash.showForm">
-                        <div class="form-group" ng-class="{'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
-                            <label class="control-label col-md-2">Food Name</label>
-                            <div class="col-md-10">
-                                <input type="text" name="name" class="form-control" ng-model="dash.food.name" required>
+                            <div class="form-group" ng-class="{'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
+                                <label class="control-label col-md-2">Location</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="location" class="form-control" ng-model="location" details="dash.food.location" googleplace placeholder="" required>
+                                </div>
+                                <p ng-show="userForm.location.$invalid && !userForm.location.$pristine" class="help-block text-center">Location is required.</p>
                             </div>
-                            <p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block text-center">Your name is required.</p>
-                        </div>
-                        <div class="form-group" ng-class="{'has-error' : userForm.location.$invalid && !userForm.location.$pristine }">
-                            <label class="control-label col-md-2">Location</label>
-                            <div class="col-md-10">
-                                <input type="text" name="location" class="form-control" ng-model="location" details="dash.food.location" googleplace placeholder="" required>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Comment</label>
+                                <div class="col-md-10">
+                                    <textarea rows="4" class="form-control" id="comment" ng-model="dash.food.comment"></textarea>
+                                </div>
                             </div>
-                            <p ng-show="userForm.location.$invalid && !userForm.location.$pristine" class="help-block text-center">Location is required.</p>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2">Comment</label>
-                            <div class="col-md-10">
-                                <textarea rows="4" class="form-control" id="comment" ng-model="dash.food.comment"></textarea>
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="tags">Tags:</label>
+                                <div class="col-md-10">
+                                    <js-tag js-tag-options="dash.jsTagOptions" id="tags"></js-tag>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-2" for="tags">Tags:</label>
-                            <div class="col-md-10">
-                                <js-tag js-tag-options="dash.jsTagOptions" id="tags"></js-tag>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="file" id="upload" ng-model="dash.image" onchange="angular.element(this).scope().readProfile(this.files[0])">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
-                                <input type="file" id="upload" ng-model="dash.image" onchange="angular.element(this).scope().readProfile(this.files[0])">
+                            <!-- SUBMIT BUTTON -->
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary btn-block" ng-click="dash.upload()" ng-disabled="userForm.$invalid">Submit FoodVenture!</button>
                             </div>
-                        </div>
-                        <!-- SUBMIT BUTTON -->
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary btn-block" ng-click="dash.upload()" ng-disabled="userForm.$invalid">Submit FoodVenture!</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -269,6 +275,12 @@
                 function onSuccess(data) {
                     console.log(data.data)
                     vm.person = data.data;
+                    var x = window.location.origin;
+                    if (data.data.fvUrl) {
+                        vm.person.fvUrl = x + "/fv/" + data.data.fvUrl;
+                    } else {
+                        vm.person.fvUrl = x + "/fv/" + data.data.id;
+                    }
                 };
                 function onError() {
                     console.log("Error")

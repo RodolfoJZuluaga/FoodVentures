@@ -17,5 +17,6 @@ namespace FoodVentures.Models.Requests
         public string FavoriteDestinations { get; set; }
         public string Bio { get; set; }
         public string AvatarUrl { get; set; }
+        public string FvUrl { get; set; }
     }
 }

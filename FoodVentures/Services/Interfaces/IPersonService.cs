@@ -9,5 +9,6 @@ namespace FoodVentures.Services
         Person Select(int id);
         Person SelectByUserId(string userId);
         void UpdatePerson(PersonUpdateRequest model);
+        Person SelectByUserUrl(string userUrl);
     }
 }

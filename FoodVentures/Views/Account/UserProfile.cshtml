@@ -36,6 +36,9 @@
             <dt>Bio:</dt>
             <dd ng-hide="personCtrl.showEdit">{{personCtrl.item.bio}}</dd>
             <dd ng-show="personCtrl.showEdit"><textarea rows="4" class="nopadding" ng-model="personCtrl.item.bio"></textarea></dd>
+            <dt>CustomUrl:</dt>
+            <dd ng-hide="personCtrl.showEdit">{{personCtrl.url}}/fv/{{personCtrl.item.fvUrl}}</dd>
+            <dd ng-show="personCtrl.showEdit">{{personCtrl.url}}/fv/<input style="display:inline;width:auto" class="nopadding" ng-model="personCtrl.item.fvUrl" type="text" /></dd>
             <dd>
                 <div class="btn-group" ng-show="personCtrl.showEdit">
                     <button class="btn btn-default btn-success" ng-click="personCtrl.edit()">Save</button>
@@ -103,6 +106,7 @@
                 vm.clear = _clear;
                 vm.upload = _upload;
                 vm.test = _test;
+                vm.url = window.location.origin;
 
                 vm.item = {};
                 vm.message = "Profile";
