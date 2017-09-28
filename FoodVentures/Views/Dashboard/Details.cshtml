@@ -25,6 +25,7 @@
             <div class="widget">
                 <img ng-if="dash.person.avatarUrl" class="img-responsive" style="height:200px;width:200px;" ng-src="//rjz.blob.core.windows.net/images/{{dash.person.avatarUrl}}" />
                 <img ng-if="!dash.person.avatarUrl" class="img-responsive" style="height:200px;width:200px;" ng-src="//rjz.blob.core.windows.net/images/a80a35c0-ef3e-4296-b0df-bfcad0f8b0fd" />
+                <a ng-href="{{dash.person.fvUrl}}">{{dash.person.fvUrl}}</a>
                 <table class="table-striped">
                     <tr>
                         <th>Name:</th>
@@ -46,10 +47,10 @@
                         <th>Bio:</th>
                         <td>{{dash.person.bio}} </td>
                     </tr>
-                    <tr>
+                    @*<tr>
                         <th>FoodVenture URL:</th>
                         <td><a ng-href="{{dash.person.fvUrl}}">{{dash.person.fvUrl}}</a></td>
-                    </tr>
+                    </tr>*@
                 </table>
             </div>
         </div>
