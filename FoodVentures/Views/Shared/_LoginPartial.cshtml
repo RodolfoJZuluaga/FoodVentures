@@ -6,6 +6,8 @@
         @Html.AntiForgeryToken()
 
         <ul class="list-inline pull-right">
+            <li><a href="/">Home</a></li>
+            <li><a href="/fv/">Dashboard</a></li>
             <li>@Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "UserProfile", "Account", routeValues: null, htmlAttributes: new { title = "Profile" })</li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>
