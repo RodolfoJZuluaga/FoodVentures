@@ -38,7 +38,7 @@ namespace FoodVentures.Services
                     p.Bio = reader.GetSafeString(startingIndex++);
                     p.AvatarUrl = reader.GetSafeString(startingIndex++);
                     p.Email = reader.GetSafeString(startingIndex++);
-                    p.FvUrl = reader.GetSafeString(startingIndex++);
+                    p.UserName = reader.GetSafeString(startingIndex++);
                 });
             return p;
         }
@@ -56,7 +56,7 @@ namespace FoodVentures.Services
                     paramCollection.AddWithValue("@FavoriteDestinations", model.FavoriteDestinations);
                     paramCollection.AddWithValue("@Bio", model.Bio);
                     paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
-                    paramCollection.AddWithValue("@FvUrl", model.FvUrl);
+                    paramCollection.AddWithValue("@UserName", model.UserName);
 
                     SqlParameter p = new SqlParameter("@Id", System.Data.SqlDbType.Int);
                     p.Direction = System.Data.ParameterDirection.Output;
@@ -94,7 +94,7 @@ namespace FoodVentures.Services
                     p.Bio = reader.GetSafeString(startingIndex++);
                     p.AvatarUrl = reader.GetSafeString(startingIndex++);
                     p.Email = reader.GetSafeString(startingIndex++);
-                    p.FvUrl = reader.GetSafeString(startingIndex++);
+                    p.UserName = reader.GetSafeString(startingIndex++);
                 });
             return p;
         }
@@ -112,7 +112,7 @@ namespace FoodVentures.Services
                     paramCollection.AddWithValue("@FavoriteDestinations", model.FavoriteDestinations);
                     paramCollection.AddWithValue("@Bio", model.Bio);
                     paramCollection.AddWithValue("@AvatarUrl", model.AvatarUrl);
-                    paramCollection.AddWithValue("@FvUrl", model.FvUrl);
+                    paramCollection.AddWithValue("@UserName", model.UserName);
                 }, returnParameters: null
                 );
         }
@@ -140,7 +140,7 @@ namespace FoodVentures.Services
                     p.Bio = reader.GetSafeString(startingIndex++);
                     p.AvatarUrl = reader.GetSafeString(startingIndex++);
                     p.Email = reader.GetSafeString(startingIndex++);
-                    p.FvUrl = reader.GetSafeString(startingIndex++);
+                    p.UserName = reader.GetSafeString(startingIndex++);
                 });
             return p;
         }

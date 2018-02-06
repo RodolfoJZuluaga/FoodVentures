@@ -18,7 +18,7 @@ namespace FoodVentures.Models.Domain
         public string Bio { get; set; }
         public string AvatarUrl { get; set; }
         public string Email { get; set; }
-        public string FvUrl { get; set; }
+        public string UserName { get; set; }
 
     }
 }
